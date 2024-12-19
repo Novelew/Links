@@ -425,4 +425,22 @@ document.addEventListener('DOMContentLoaded', () => {
             defaultTab.click();
         }
     });
+
+    // Add download button functionality
+    document.querySelectorAll('.download-btn:not(.blocked)').forEach(button => {
+        button.onclick = function(e) {
+            e.preventDefault();
+            const fileUrl = this.getAttribute('href');
+            if (fileUrl && fileUrl !== 'javascript:void(0)') {
+                const fileName = fileUrl.split('/').pop();
+                const downloadLink = document.createElement('a');
+                downloadLink.href = fileUrl;
+                downloadLink.setAttribute('download', fileName);
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }
+            return false;
+        };
+    });
 });
