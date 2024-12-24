@@ -12,6 +12,7 @@
     --telegram-color: #0088cc;
     --market-color: #4CAF50;
     --theme-editor-color: #9C27B0;
+    --reviews-color: #FFD700;
 }
 
 * {
@@ -297,6 +298,15 @@ body {
 
 .market:hover {
     box-shadow: 0 0 30px rgba(76, 175, 80, 0.2);
+}
+
+.reviews { 
+    color: var(--reviews-color);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+}
+
+.reviews:hover {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
 }
 
 .theme-editor { 
