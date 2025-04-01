@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novelew - Маркет</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background-color: #1a1a1a;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .container {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            flex-grow: 1;
+        }
+        
+        h1, h2 {
+            color: #ff3333;
+            text-align: center;
+        }
+        
+        .section-title {
+            position: relative;
+            margin: 2rem 0;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: #ff3333;
+        }
+        
+        .products-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            width: 100%;
+        }
+        
+        .product-card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #333;
+            cursor: pointer;
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+            margin-bottom: 1rem;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border-color: #ff3333;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+        }
+        
+        .product-info {
+            padding: 1rem;
+        }
+        
+        .product-title {
+            font-size: 1.2rem;
+            margin: 0 0 0.5rem 0;
+            color: #ff3333;
+        }
+        
+        .product-description {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-bottom: 1rem;
+        }
+        
+        .product-button {
+            display: inline-block;
+            background-color: #ff3333;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-align: center;
+            width: auto;
+            min-width: 120px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .product-button:hover {
+            background-color: #cc0000;
+        }
+
+        .free-label {
+            background-color: #2ecc71;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
+        .paid-label {
+            background-color: #f39c12;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        
+        .price-tag {
+            background-color: #e74c3c;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        
+        footer {
+            background-color: #1a1a1a;
+            padding: 1rem 0;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .nav-brand {
+            color: #ff3333;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: #ff3333;
+        }
+        
+        /* Modal styles for product details */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid #333;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .close-modal {
+            color: #aaa;
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: #ff3333;
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-image {
+            width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .modal-image:hover {
+            transform: scale(1.03);
+        }
+        
+        .modal-title {
+            color: #ff3333;
+            margin-top: 0;
+        }
+        
+        .modal-description {
+            line-height: 1.6;
+        }
+        
+        .modal-action {
+            margin-top: 2rem;
+            text-align: right;
+        }
+
+        /* Image lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .lightbox.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+        }
+        
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2.5rem;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .close-lightbox:hover {
+            color: #ff3333;
+        }
+
+        /* Category-specific grid layouts */
+        .best-grid .product-card {
+            flex-basis: calc(20% - 1.5rem);
+            max-width: none;
+        }
+        
+        .configs-grid .product-card {
+            flex-basis: calc(25% - 1.5rem);
+            max-width: none;
+        }
+        
+        .themes-grid .product-card {
+            flex-basis: calc(16.666% - 1.5rem);
+            max-width: none;
+        }
+        
+        @media (max-width: 1400px) {
+            .themes-grid .product-card {
+                flex-basis: calc(20% - 1.5rem);
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .best-grid .product-card {
+                flex-basis: calc(25% - 1.5rem);
+            }
+            
+            .configs-grid .product-card {
+                flex-basis: calc(33.333% - 1.5rem);
+            }
+            
+            .themes-grid .product-card {
+                flex-basis: calc(25% - 1.5rem);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .best-grid .product-card,
+            .configs-grid .product-card,
+            .themes-grid .product-card {
+                flex-basis: calc(33.333% - 1.5rem);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .best-grid .product-card,
+            .configs-grid .product-card,
+            .themes-grid .product-card {
+                flex-basis: calc(50% - 1.5rem);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .best-grid .product-card,
+            .configs-grid .product-card,
+            .themes-grid .product-card {
+                flex-basis: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="nav-brand">Novelew</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Главная</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <h1>Маркет</h1>
+        
+        <h2 class="section-title">Лучшее</h2>
+        <div class="products-grid best-grid">
+            <div class="product-card">
+                <img src="images/nwcleaner.jpg" alt="NWCleaner" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">NWCleaner</h3>
+                    <p class="product-description">Премиум утилита для очистки системы от различных майнкрафт чит-клиентов</p>
+                    <a href="https://novelew.github.io/NWCleaner/" class="product-button" target="_blank">Купить (0-439.99₽)</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/funtime.jpg" alt="Config for FunTime Rework" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Конфиг для FunTime Rework</h3>
+                    <p class="product-description">Переработанная конфигурация для клиента Nursultan, оптимизированная для серверов FunTime</p>
+                    <a href="configs/novelewfuntimerework.file" class="product-button" download>Скачать</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/novelewpack.jpg" alt="Novelew Pack" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Novelew Pack</h3>
+                    <p class="product-description">Коллекция премиум тем, конфигов, ресурспаков, шейдеров и настроек майнкрафта в одном удобном пакете</p>
+                    <a href="files/Novelew Pack Free.zip" class="product-button" download>Скачать</a>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Конфиги</h2>
+        
+        <p class="section-description" style="text-align: center; margin-bottom: 2rem;">Конфиги для чит-клиента Minecraft под названием Nursultan</p>
+        <div class="products-grid configs-grid">
+            <div class="product-card">
+                <img src="images/funtime.jpg" alt="FunTime Config" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">FunTime Config</h3>
+                    <p class="product-description">Configuration preset for Nursultan client optimized for FunTime server.</p>
+                    <a href="configs/novelewfuntime.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/holyworld.jpg" alt="HolyWorld Config" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">HolyWorld Config</h3>
+                    <p class="product-description">Configuration preset for Nursultan client optimized for HolyWorld server.</p>
+                    <a href="configs/novelewholyworld.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/legit.jpg" alt="Legit Config" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Legit Config</h3>
+                    <p class="product-description">Configuration preset for Nursultan client providing a legitimate gameplay experience.</p>
+                    <a href="configs/novelewlegit.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/reallyworld.jpg" alt="ReallyWorld Config" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">ReallyWorld Config</h3>
+                    <p class="product-description">Configuration preset for Nursultan client optimized for ReallyWorld server.</p>
+                    <a href="configs/novelewreallyworld.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Themes</h2>
+        <p class="section-description" style="text-align: center; margin-bottom: 2rem;">Themes for Minecraft cheat client named Nursultan</p>
+        <div class="products-grid themes-grid">
+            <div class="product-card">
+                <img src="images/black.jpg" alt="Black Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Black Theme</h3>
+                    <p class="product-description">Dark theme for Nursultan client with sleek black interface.</p>
+                    <a href="themes/black.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/blue.jpg" alt="Blue Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Blue Theme</h3>
+                    <p class="product-description">Cool blue theme for Nursultan client.</p>
+                    <a href="themes/blue.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/burgundy.jpg" alt="Burgundy Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Burgundy Theme</h3>
+                    <p class="product-description">Rich burgundy colored theme for Nursultan client.</p>
+                    <a href="themes/burgundy.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/dark.jpg" alt="Dark Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Dark Theme</h3>
+                    <p class="product-description">Dark mode theme for Nursultan client that reduces eye strain.</p>
+                    <a href="themes/dark.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/gold.jpg" alt="Gold Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Gold Theme</h3>
+                    <p class="product-description">Luxury gold themed interface for Nursultan client.</p>
+                    <a href="themes/gold.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/green.jpg" alt="Green Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Green Theme</h3>
+                    <p class="product-description">Fresh green theme for Nursultan client.</p>
+                    <a href="themes/green.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/pink.jpg" alt="Pink Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Pink Theme</h3>
+                    <p class="product-description">Vibrant pink theme for Nursultan client.</p>
+                    <a href="themes/pink.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/purple.jpg" alt="Purple Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Purple Theme</h3>
+                    <p class="product-description">Rich purple theme for Nursultan client.</p>
+                    <a href="themes/purple.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/red.jpg" alt="Red Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Red Theme</h3>
+                    <p class="product-description">Bold red theme for Nursultan client...</p>
+                    <a href="themes/red.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/swamp.jpg" alt="Swamp Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Swamp Theme</h3>
+                    <p class="product-description">Earthy swamp-colored theme for Nursultan client.</p>
+                    <a href="themes/swamp.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/turquoise.jpg" alt="Turquoise Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Turquoise Theme</h3>
+                    <p class="product-description">Calming turquoise theme for Nursultan client.</p>
+                    <a href="themes/turquoise.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <img src="images/white.jpg" alt="White Theme" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">White Theme</h3>
+                    <p class="product-description">Clean white theme for Nursultan client.</p>
+                    <a href="themes/white.file" class="product-button" download>Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Image lightbox -->
+    <div id="imageLightbox" class="lightbox" onclick="closeLightbox(event)">
+        <span class="close-lightbox">&times;</span>
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <img id="lightboxImage" src="" alt="" class="lightbox-image">
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2024 Novelew. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // Add image expansion functionality
+        document.querySelectorAll('.product-image').forEach(image => {
+            image.style.cursor = 'pointer';
+            image.addEventListener('click', function(event) {
+                const lightbox = document.getElementById('imageLightbox');
+                const lightboxImage = document.getElementById('lightboxImage');
+                
+                lightboxImage.src = this.src;
+                lightboxImage.alt = this.alt;
+                lightbox.classList.add('active');
+                
+                event.preventDefault();
+                event.stopPropagation();
+            });
+        });
+        
+        function closeLightbox(event) {
+            const lightbox = document.getElementById('imageLightbox');
+            
+            if (event.target === lightbox || event.target.className === 'close-lightbox') {
+                lightbox.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
